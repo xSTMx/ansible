@@ -1,0 +1,20 @@
+- hosts: all
+  tasks:
+  - name: install latest ufw
+    apt:
+      name: ufw
+      state: latest
+  - name: enable ufw
+    ufw:
+      state: enabled
+  - name: set ufw ssh access
+    ufw:
+      rule: limit
+      port: ssh
+      proto: tcp
+  - name: set timezone to Europe/Zurich
+    timezone:
+      name: Europe/Zurich
+  - name: set hostname
+    hostname:
+     name: "{{ inventory_hostname }}"

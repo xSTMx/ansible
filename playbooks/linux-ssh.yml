@@ -1,0 +1,30 @@
+- hosts: all
+  tasks:
+  - name: deploy ssh key
+    authorized_key:
+      user=morf
+      key="{{ lookup('file', '/home/morf/.ssh/id_rsa.pub') }}"
+      state=present
+  - name: disable ssh password authentication
+    lineinfile:
+      dest=/etc/ssh/sshd_config
+      regexp='^PasswordAuthentication'
+      line="PasswordAuthentication no"
+      state=present
+      backup=yes
+    notify:
+      - restart ssh
+  - name: disable root login
+    lineinfile:
+      dest=/etc/ssh/sshd_config
+      regexp='^PermitRootLogin'
+      line="PermitRootLogin no"
+      state=present
+      backup=yes
+    notify:
+      - restart ssh
+  handlers:
+  - name: restart ssh
+    service:
+      name=sshd
+      state=restarted
